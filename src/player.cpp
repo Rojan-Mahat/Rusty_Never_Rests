@@ -6,7 +6,7 @@ Player::Player()
         speed(0.f)
 {
     bodyP.setPosition({80,345});
-    bodyP.setFillColor(sf::Color::Blue);
+    bodyP.setFillColor(sf::Color(56, 189, 248));
 }
 
 const sf::RectangleShape& Player::getPlayerBody()const{
@@ -18,6 +18,12 @@ void Player::checkJump(){
         speed = -20.0;
         inAir = true;
     }
+}
+
+void Player::reset(){
+    bodyP.setPosition({80,345});
+    inAir = false;
+    speed = 0.f;
 }
 
 void Player::Jump(){

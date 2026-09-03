@@ -13,4 +13,6 @@ class Player{
     void checkJump();
     void Jump();
 
+    void reset();
+
 };

@@ -6,7 +6,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_executable(DinoRunner src/main.cpp
                           src/player.cpp
                           src/game.cpp
-                          src/enemy.cpp)
+                          src/enemy.cpp
+                          src/fireball.cpp)
 
 find_package(SFML 3 COMPONENTS Graphics REQUIRED)
 target_link_libraries(DinoRunner PRIVATE SFML::Graphics)
