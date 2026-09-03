@@ -5,14 +5,14 @@
 Fireball::Fireball()
     :fire(25.f),
     speed(-8.5f),
-    respawned(true)
+    respawned(true),
+    damage(1)
 
 {
     fire.setOrigin({25.f,25.f});
     fire.setPosition(createRandomSpawn());
+    fire.setFillColor(sf::Color::Yellow);
 }
-
-
 
 
 sf::Vector2f Fireball::createRandomSpawn(){
@@ -48,4 +48,8 @@ void Fireball::move(){
 
 bool Fireball::getRespawnedStatus(){
     return respawned;
+}
+
+const int Fireball::getFireDamage()const{
+    return damage;
 }

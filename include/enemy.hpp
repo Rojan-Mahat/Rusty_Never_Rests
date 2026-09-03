@@ -5,6 +5,7 @@ class Enemy{
     sf::RectangleShape bodyE;
     float speed;
     bool respawned;
+    int damage;
 
 
 
@@ -17,5 +18,6 @@ class Enemy{
     bool getRespawnedStatus();
     void increaseDifficulty(float mag);
     float createRandomSpawn();
+    const int getEnemyDamage()const;
 
 };

@@ -11,12 +11,14 @@ class Game{
     Enemy enemy;
     bool collision;
     bool paused;
+    bool burn;
     int score;
     int bestScore;
     sf::RectangleShape runningPath;
     bool scoreAwarded;
     sf::Font scoreFont;
     sf::Text scoreText;
+    sf::Text hpText;
     sf::Text bestScoreText;
     Fireball fire;
 
@@ -30,7 +32,9 @@ class Game{
     void drawEnemyBody();
     void drawFireballBody();
     void checkCollision();
+    void checkFireContact();
     void run();
+    void checkPlayer();
 
     void pauseGame();
     void resumeGame();
@@ -38,5 +42,5 @@ class Game{
     void reset();
 
     void updateScore();
-    void drawScore();
+    void drawTexts();
 };

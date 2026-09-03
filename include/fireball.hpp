@@ -5,6 +5,7 @@ class Fireball{
     private:
     sf::CircleShape fire;
     float speed;
+    int damage;
     bool respawned;
 
 
@@ -17,5 +18,6 @@ class Fireball{
     void move();
     sf::Vector2f createRandomSpawn();
     bool getRespawnedStatus();
+    const int getFireDamage()const;
 
 };

@@ -1,4 +1,5 @@
 #include "game.hpp"
+#include <cmath>
 Game::Game()
     :screen (sf::VideoMode({1200,800}),"DinoRunner"),
     runningPath(createGround()),
@@ -7,13 +8,17 @@ Game::Game()
     score(0),
     bestScore(0),
     scoreAwarded(false),
+    burn(false),
     scoreFont("assets/font.ttf"),
-    scoreText(scoreFont, "SCORE: 0", 30),
-    bestScoreText(scoreFont, "SCORE: 0", 30)
+    scoreText(scoreFont, "SCORE 0", 30),
+    bestScoreText(scoreFont, "SCORE 0", 30),
+    hpText(scoreFont, "HEALTH  4", 30)
 {
     screen.setFramerateLimit(60);
     scoreText.setPosition({1000.f, 12.f});
-    scoreText.setFillColor(sf::Color(248, 250, 252));
+
+    hpText.setPosition({500,12.f});
+    hpText.setFillColor(sf::Color(34, 197, 94));
 
     bestScoreText.setPosition({50,12.f});
     bestScoreText.setFillColor(sf::Color(248, 250, 252));
@@ -30,6 +35,7 @@ void Game::reset(){
     paused = false;
     collision = false;
     score = 0;
+    burn = false;
     scoreAwarded = false;
 }
 
@@ -61,22 +67,39 @@ void Game::resumeGame(){
 void Game::restartGame(){
     enemy.reset();
     player.reset();
+    fire.reset();
     reset();
 }
 
 
-void Game::drawScore(){
+void Game::drawTexts(){
     scoreText.setString("SCORE " + std::to_string(score));
     screen.draw(scoreText);
 
     bestScoreText.setString("BEST SCORE " + std::to_string(bestScore));
     screen.draw(bestScoreText);
+
+    if(player.getPlayerhp()>2){
+    hpText.setFillColor(sf::Color(34, 197, 94));
+    }
+    else if(player.getPlayerhp()==2){
+        hpText.setFillColor(sf::Color(250, 204, 21));
+    }
+    else{
+        hpText.setFillColor(sf::Color(248, 113, 113));
+    }
+    hpText.setString("HEALTH " + std::to_string(player.getPlayerhp()));
+    screen.draw(hpText);
+
 }
 
 void Game::updateScore(){
     if((enemy.getEnemyBody().getPosition().x < player.getPlayerBody().getPosition().x - enemy.getEnemyBody().getSize().x) 
         &&(!scoreAwarded)){
         score++;
+        if(bestScore < score){
+                bestScore = score;
+            }
         if(score % 2 == 0){
             enemy.increaseDifficulty(0.5);
         }
@@ -87,6 +110,47 @@ void Game::updateScore(){
         scoreAwarded = false;
     }
 
+    if(fire.getRespawnedStatus()){
+        burn = false;
+    }
+}
+
+void Game::checkFireContact(){
+    if(!burn){
+        if(((fire.getFireballBody().getPosition().x >=player.getPlayerBody().getPosition().x - fire.getFireballBody().getRadius())
+        && (fire.getFireballBody().getPosition().x <= player.getPlayerBody().getPosition().x + player.getPlayerBody().getSize().x + fire.getFireballBody().getRadius()))
+        &&((fire.getFireballBody().getPosition().y >= player.getPlayerBody().getPosition().y - fire.getFireballBody().getRadius())
+        && (fire.getFireballBody().getPosition().y <= player.getPlayerBody().getPosition().y + player.getPlayerBody().getSize().y + fire.getFireballBody().getRadius())))
+        {
+        float dx, dy;
+        if(fire.getFireballBody().getPosition().x > player.getPlayerBody().getPosition().x + player.getPlayerBody().getSize().x)
+                dx = fire.getFireballBody().getPosition().x - (player.getPlayerBody().getPosition().x + player.getPlayerBody().getSize().x);
+            else if(fire.getFireballBody().getPosition().x < player.getPlayerBody().getPosition().x)
+                dx = player.getPlayerBody().getPosition().x - fire.getFireballBody().getPosition().x;
+            else
+                dx = 0;
+                
+            if(fire.getFireballBody().getPosition().y < player.getPlayerBody().getPosition().y)
+                dy = player.getPlayerBody().getPosition().y - fire.getFireballBody().getPosition().y;
+            else if((player.getPlayerBody().getPosition().y) + player.getPlayerBody().getSize().y < (fire.getFireballBody().getPosition().y))
+                dy = fire.getFireballBody().getPosition().y - (player.getPlayerBody().getPosition().y + player.getPlayerBody().getSize().y);
+            else
+                dy = 0;
+
+            float distance = sqrt(dx*dx + dy*dy);
+            if(distance <=  fire.getFireballBody().getRadius()){
+                burn = true;
+                player.changeHP(fire.getFireDamage());
+            }
+        }
+    }
+
+}
+
+void Game::checkPlayer(){
+    if(player.getPlayerhp()<=0){
+        pauseGame();
+    }
 }
 
 
@@ -98,10 +162,7 @@ void Game::checkCollision(){
     else{
         if(enemy.getEnemyBody().getPosition().y <= player.getPlayerBody().getPosition().y + player.getPlayerBody().getSize().y){
             collision = true;
-            if(bestScore < score){
-                bestScore = score;
-            }
-            pauseGame();
+            player.changeHP(enemy.getEnemyDamage());
         }
     }
 }   
@@ -116,7 +177,7 @@ while(screen.isOpen()){
         if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()){
             if (keyPressed->code == sf::Keyboard::Key::Space){
                 if(paused){
-                    if(!collision){
+                    if(player.getPlayerhp()!= 0){
                         resumeGame();
                     }
                 }
@@ -143,6 +204,8 @@ while(screen.isOpen()){
         player.Jump();
         enemy.move();
         checkCollision();
+        checkPlayer();
+        checkFireContact();
         updateScore();
         fire.move();
     }
@@ -152,7 +215,7 @@ while(screen.isOpen()){
     drawPlayerBody();
     drawEnemyBody();
     drawFireballBody();
-    drawScore();
+    drawTexts();
     screen.display();
 }
 }

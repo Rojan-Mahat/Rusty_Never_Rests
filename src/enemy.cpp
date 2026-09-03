@@ -5,7 +5,8 @@
 Enemy::Enemy()
       :bodyE({40.f,100.f}),
       speed(-6.5f),
-      respawned(true)
+      respawned(true),
+      damage(4)
 {
     bodyE.setPosition({1160.f,295.f});
     bodyE.setFillColor(sf::Color(251, 113, 133));
@@ -43,4 +44,8 @@ void Enemy::reset(){
 
 const sf::RectangleShape& Enemy::getEnemyBody() const{
     return bodyE;
+}
+
+const int Enemy::getEnemyDamage()const{
+    return damage;
 }

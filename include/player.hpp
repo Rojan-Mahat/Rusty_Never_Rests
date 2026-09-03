@@ -4,6 +4,7 @@ class Player{
     private:
     sf::RectangleShape bodyP;
     bool inAir;
+    int hp;
     float speed;
 
 
@@ -12,6 +13,8 @@ class Player{
     const sf::RectangleShape& getPlayerBody()const;
     void checkJump();
     void Jump();
+    const int getPlayerhp() const;
+    void changeHP(int damage);
 
     void reset();
 

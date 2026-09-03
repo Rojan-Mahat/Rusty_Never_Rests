@@ -3,7 +3,8 @@
 Player::Player()
         :bodyP({80,50}),
         inAir(false),
-        speed(0.f)
+        speed(0.f),
+        hp(4)
 {
     bodyP.setPosition({80,345});
     bodyP.setFillColor(sf::Color(56, 189, 248));
@@ -22,6 +23,7 @@ void Player::checkJump(){
 
 void Player::reset(){
     bodyP.setPosition({80,345});
+    hp = 4;
     inAir = false;
     speed = 0.f;
 }
@@ -35,5 +37,16 @@ void Player::Jump(){
         inAir = false;
         speed = 0.f;
         return;
+    }
+}
+
+const int Player::getPlayerhp() const{
+    return hp;
+}
+
+void Player::changeHP(int damage){
+    hp = hp - damage;
+    if(hp<=0){
+        hp = 0;
     }
 }
