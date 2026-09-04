@@ -6,6 +6,7 @@ class Player{
     bool inAir;
     int hp;
     float speed;
+    bool isBurning;
 
 
     public:
@@ -15,7 +16,13 @@ class Player{
     void Jump();
     const int getPlayerhp() const;
     void changeHP(int damage);
+    void changeHP(float damage);
 
     void reset();
+    const bool isPlayerJumping() const;
+    void changeWorld();
+    void setBurningTrue();
+    void setBurningFalse();
+    const bool getBurningState() const;
 
 };
