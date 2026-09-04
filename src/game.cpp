@@ -8,9 +8,9 @@ Game::Game()
     paused(false),
     score(0),
     bestScore(0),
-    scoreAwarded(false),
     onLand(true),
     oxygen(100),
+    enemies({Enemy({1160,295},-6.5),Enemy({1700,295},-6.5)}),
     scoreFont("assets/font.ttf"),
     scoreText(scoreFont, "SCORE 0", 30),
     bestScoreText(scoreFont, "SCORE 0", 30),
@@ -46,7 +46,6 @@ void Game::reset(){
     paused = false;
     collision = false;
     score = 0;
-    scoreAwarded = false;
     onLand = true;
     burnTimer = 0;
     drownTimer = 0;
@@ -67,7 +66,8 @@ void Game::drawPlayerBody(){
 }
 
 void Game::drawEnemyBody(){
-    screen.draw(enemy.getEnemyBody());
+    for(const auto& enemy:enemies)
+        screen.draw(enemy.getEnemyBody());
 }
 
 void Game::drawFireballBody(){
@@ -84,7 +84,8 @@ void Game::resumeGame(){
 }
 
 void Game::restartGame(){
-    enemy.reset();
+    for(auto& enemy : enemies)
+        enemy.reset();
     player.reset();
     fire.reset();
     reset();
@@ -247,20 +248,20 @@ void Game::drawTexts(){
 
 
 void Game::updateScore(){
-    if((enemy.getEnemyBody().getPosition().x < player.getPlayerBody().getPosition().x - enemy.getEnemyBody().getSize().x) 
-        &&(!scoreAwarded)){
-        score++;
-        if(bestScore < score){
+    for(auto& enemy: enemies){
+        if((enemy.getPassStatus(player.getPlayerBody().getPosition().x - enemy.getEnemyBody().getSize().x))&&(!enemy.getScoreStatus())){
+            score++;
+            enemy.markScored();
+            if(bestScore < score){
                 bestScore = score;
             }
-        if(score % 2 == 0){
-            enemy.increaseDifficulty(0.5);
+            if(score%3 == 0){
+                enemy.increaseDifficulty(0.5);
+            }
         }
-        scoreAwarded = true;
-    }
-
-    if(enemy.getRespawnedStatus()){
-        scoreAwarded = false;
+        if(enemy.getRespawnedStatus()){
+                enemy.unmarkScored();
+            }
     }
 }
 
@@ -319,17 +320,20 @@ void Game::stateChanger(){
 
 
 void Game::checkCollision(){
-    if((enemy.getEnemyBody().getPosition().x < player.getPlayerBody().getPosition().x - enemy.getEnemyBody().getSize().x) 
-    ||(enemy.getEnemyBody().getPosition().x > player.getPlayerBody().getPosition().x+ player.getPlayerBody().getSize().x )){
-        collision = false;
-    }
-    else{
-        if(enemy.getEnemyBody().getPosition().y <= player.getPlayerBody().getPosition().y + player.getPlayerBody().getSize().y){
-            collision = true;
-            player.changeHP(enemy.getEnemyDamage());
+    for(const auto& enemy: enemies){
+        if((enemy.getEnemyBody().getPosition().x < player.getPlayerBody().getPosition().x - enemy.getEnemyBody().getSize().x) 
+        ||(enemy.getEnemyBody().getPosition().x > player.getPlayerBody().getPosition().x+ player.getPlayerBody().getSize().x )){
+            collision = false;
         }
-    }
-}   
+        else{
+            if(enemy.getEnemyBody().getPosition().y <= player.getPlayerBody().getPosition().y + player.getPlayerBody().getSize().y){
+                collision = true;
+                player.changeHP(enemy.getEnemyDamage());
+                break;
+            }
+        }
+    }   
+}
 
 void Game::run(){
 while(screen.isOpen()){
@@ -384,18 +388,14 @@ while(screen.isOpen()){
         updateOxygenText(dt);
         checkPlayer(dt);
         electricution(dt);
+        for(auto& enemy: enemies)
+            enemy.move();
+        fire.move();
         if(onLand){
             player.Jump();
-            enemy.move();
             checkCollision();
             checkFireContact();
             updateScore();
-            fire.move();
-        }
-        else{
-            enemy.move();
-            fire.move();
-            
         }
     }
 

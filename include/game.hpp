@@ -9,13 +9,12 @@ class Game{
     sf::RenderWindow screen;
     sf::Clock frameClock;
     Player player;
-    Enemy enemy;
+    std::vector<Enemy> enemies;
     bool collision;
     bool paused;
     int score;
     int bestScore;
     sf::RectangleShape runningPath;
-    bool scoreAwarded;
     sf::Font scoreFont;
     sf::Text scoreText;
     sf::Text hpText;
