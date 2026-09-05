@@ -11,6 +11,7 @@ Game::Game()
     onLand(true),
     oxygen(100),
     enemies({Enemy({1160,295},-6.5),Enemy({1700,295},-6.5)}),
+    power({createRandom(2500,8000),370},createRandom(-10,-15)),
     scoreFont("assets/font.ttf"),
     scoreText(scoreFont, "SCORE 0", 30),
     bestScoreText(scoreFont, "SCORE 0", 30),
@@ -55,6 +56,7 @@ void Game::reset(){
     gameTimer = 0;
     electricWarning = false;
     electricityTime = electricityTimeGenerator();
+    reStartPowerUps();
 }
 
 void Game::drawGround(){
@@ -74,6 +76,10 @@ void Game::drawFireballBody(){
      screen.draw(fire.getFireballBody());
 }
 
+void Game::drawPowerUps(){
+    screen.draw(power.getPowerBody());
+}
+
 void Game::pauseGame(){
     paused = true;
 
@@ -90,6 +96,16 @@ void Game::restartGame(){
     fire.reset();
     reset();
 }
+
+float Game::createRandom(int a , int b){
+    std::random_device rd;
+    std::mt19937 gen{rd()};
+
+    std::uniform_real_distribution<float> distX(a,b);
+    float x = distX(gen);
+    return x;
+}
+
 
 float Game::electricityTimeGenerator(){
     std::random_device rd;
@@ -142,6 +158,24 @@ void Game::drawElectricWarning(){
         warning.setFillColor(sf::Color(56, 189, 248, 110));
     }
     screen.draw(warning);
+}
+
+void Game::reStartPowerUps(){
+    power.setRespawn(1);
+    power.getPowerBody().setPosition({createRandom(2500,8000),370});
+    power.setPowerSpeed(createRandom(-10,-15));
+    power.setPowerAddStatus(0);
+    power.setBounds(0);
+}
+
+void Game::runPowerUps(){
+    if(!power.getIfOutOfBounds()){
+        power.setRespawn(0);
+        power.move();
+    }
+    else{
+        reStartPowerUps();
+    }
 }
 
 
@@ -335,6 +369,37 @@ void Game::checkCollision(){
     }   
 }
 
+void Game::PowerCollision(){
+    if((power.getPowerBody().getPosition().x <= player.getPlayerBody().getPosition().x + player.getPlayerBody().getSize().x + (power.getPowerBody().getRadius()))
+    &&(power.getPowerBody().getPosition().x >= player.getPlayerBody().getPosition().x - power.getPowerBody().getRadius())
+    &&(power.getPowerBody().getPosition().y - power.getPowerBody().getRadius()<= player.getPlayerBody().getPosition().y + player.getPlayerBody().getSize().y)
+    &&(power.getPowerBody().getPosition().y >= player.getPlayerBody().getPosition().y - power.getPowerBody().getRadius())){   
+        float dx, dy;
+        if(power.getPowerBody().getPosition().x > player.getPlayerBody().getPosition().x + player.getPlayerBody().getSize().x){
+            dx = power.getPowerBody().getPosition().x - (player.getPlayerBody().getPosition().x + player.getPlayerBody().getSize().x);
+        }
+        else if (power.getPowerBody().getPosition().x < player.getPlayerBody().getPosition().x){
+            dx = player.getPlayerBody().getPosition().x - power.getPowerBody().getPosition().x;
+        }
+        else{
+            dx = 0;
+        }
+
+        if(power.getPowerBody().getPosition().y < player.getPlayerBody().getPosition().y)
+            dy = player.getPlayerBody().getPosition().y - power.getPowerBody().getPosition().y;
+        else if((player.getPlayerBody().getPosition().y) + player.getPlayerBody().getSize().y < (power.getPowerBody().getPosition().y))
+            dy = power.getPowerBody().getPosition().y - (player.getPlayerBody().getPosition().y + player.getPlayerBody().getSize().y);
+        else
+            dy = 0;
+        float distance = sqrt(dx*dx + dy*dy);
+        if(distance <=  power.getPowerBody().getRadius() && (!power.getPowerAddStatus())){
+            player.changeHP(-1);
+            power.setPowerAddStatus(1);
+        }
+    }
+
+}
+
 void Game::run(){
 while(screen.isOpen()){
     float dt = frameClock.restart().asSeconds();
@@ -388,12 +453,14 @@ while(screen.isOpen()){
         updateOxygenText(dt);
         checkPlayer(dt);
         electricution(dt);
+        runPowerUps();
         for(auto& enemy: enemies)
             enemy.move();
         fire.move();
         if(onLand){
             player.Jump();
             checkCollision();
+            PowerCollision();
             checkFireContact();
             updateScore();
         }
@@ -406,6 +473,7 @@ while(screen.isOpen()){
     drawPlayerBody();
     drawEnemyBody();
     drawFireballBody();
+    drawPowerUps();
     drawTexts();
     screen.display();
 }

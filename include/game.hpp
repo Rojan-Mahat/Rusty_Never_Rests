@@ -2,6 +2,7 @@
 #include "player.hpp"
 #include "enemy.hpp"
 #include "fireball.hpp"
+#include"powerup.hpp"
 #include<SFML/Graphics.hpp>
 #include<random>
 class Game{
@@ -27,6 +28,7 @@ class Game{
     float burnTimer;
     float electricityTime;
     float gameTimer;
+    Powerup power;
 
     float oxygenBlinkTimer = 0.f;
     bool oxygenTextVisible = true;
@@ -49,11 +51,14 @@ class Game{
     void drawPlayerBody();
     void drawEnemyBody();
     void drawFireballBody();
+    void drawPowerUps();
     void checkCollision();
     void checkFireContact();
     void run();
     void checkPlayer(float dt);
+    float createRandom(int a, int b);
 
+    void runPowerUps();
     void pauseGame();
     void resumeGame();
     void restartGame();
@@ -61,6 +66,8 @@ class Game{
     void stateChanger();
     void trackOxygen(float dt);
     void damageByBurning(float dt);
+    void PowerCollision();
+    void reStartPowerUps();
 
     void updateScore();
     void drawTexts();

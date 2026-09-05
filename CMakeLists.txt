@@ -7,7 +7,8 @@ add_executable(DinoRunner src/main.cpp
                           src/player.cpp
                           src/game.cpp
                           src/enemy.cpp
-                          src/fireball.cpp)
+                          src/fireball.cpp
+                          src/powerup.cpp)
 
 find_package(SFML 3 COMPONENTS Graphics REQUIRED)
 target_link_libraries(DinoRunner PRIVATE SFML::Graphics)
