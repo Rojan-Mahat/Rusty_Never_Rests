@@ -1,9 +1,10 @@
 #include<SFML/Graphics.hpp>
 #include"powerup.hpp"
 
-Powerup::Powerup(sf::Vector2f givenLocation, float givenSpeed)
+Powerup::Powerup(sf::Vector2f givenLocation, float givenSpeed, Type whatTypeofPower)
     :power(25.f),
     speed(givenSpeed),
+    type(whatTypeofPower),
     respawn(false),
     ifPowerAdded(false),
     outOfBounds(false)
@@ -72,3 +73,13 @@ void Powerup::setBounds(int a){
         outOfBounds = true;
     }
 }
+
+Powerup::Type Powerup::getType(){
+    return type;
+}
+
+void Powerup::setType(Type newType){
+    type = newType;
+}
+
+

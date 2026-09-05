@@ -11,7 +11,6 @@ class Game{
     sf::Clock frameClock;
     Player player;
     std::vector<Enemy> enemies;
-    bool collision;
     bool paused;
     int score;
     int bestScore;
@@ -21,6 +20,7 @@ class Game{
     sf::Text hpText;
     sf::Text oxygenText;
     sf::Text bestScoreText;
+    sf::Text powerDurationText;
     Fireball fire;
     bool onLand;
     float oxygen;
@@ -29,6 +29,15 @@ class Game{
     float electricityTime;
     float gameTimer;
     Powerup power;
+    float powerUpTimer;
+    bool collisionShield;
+    bool electricalShield;
+    bool poweredState;
+    bool flightActive;
+    bool godActive;
+    std::vector<float> initial_speed_enemy;
+    int summonGod;
+    float powerDuration;
 
     float oxygenBlinkTimer = 0.f;
     bool oxygenTextVisible = true;
@@ -36,6 +45,7 @@ class Game{
     bool electricWarning = false;
     bool warningRed = true;
     float warningFlashTimer = 0.f;
+    
 
 
     
@@ -46,7 +56,6 @@ class Game{
     public:
     Game();
     sf::RectangleShape createGround();
-    sf::RectangleShape createScoreBoard();
     void drawGround();
     void drawPlayerBody();
     void drawEnemyBody();
@@ -57,6 +66,7 @@ class Game{
     void run();
     void checkPlayer(float dt);
     float createRandom(int a, int b);
+    
 
     void runPowerUps();
     void pauseGame();
@@ -68,6 +78,7 @@ class Game{
     void damageByBurning(float dt);
     void PowerCollision();
     void reStartPowerUps();
+    void providePower();
 
     void updateScore();
     void drawTexts();
@@ -77,4 +88,16 @@ class Game{
     float electricityTimeGenerator();
     void checkElectricution();
     void drawElectricWarning();
+
+    void noDamage();
+    void flightMode();
+    void resistElectricity();
+    void godMode();
+
+    void enable_collision_shield();
+    void disable_collision_shield();
+    void enable_electrical_shield();
+    void disable_electrical_shield();
+    void setRandomType();
+    
 };

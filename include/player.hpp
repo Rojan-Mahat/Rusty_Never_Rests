@@ -16,7 +16,6 @@ class Player{
     void Jump();
     const int getPlayerhp() const;
     void changeHP(int damage);
-    void changeHP(float damage);
 
     void reset();
     const bool isPlayerJumping() const;
@@ -24,5 +23,7 @@ class Player{
     void setBurningTrue();
     void setBurningFalse();
     const bool getBurningState() const;
+
+    void setPlacement(sf::Vector2f coordinates);
 
 };

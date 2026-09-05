@@ -15,6 +15,11 @@ const sf::RectangleShape& Player::getPlayerBody()const{
     return bodyP;
 }
 
+
+void Player::setPlacement(sf::Vector2f coordinates){
+    bodyP.setPosition(coordinates);
+}
+
 void Player::checkJump(){
     if(bodyP.getPosition().y + bodyP.getSize().y == 395 && (!inAir)){
         speed = -21.5;
@@ -52,14 +57,11 @@ void Player::changeHP(int damage){
     if(hp<=0){
         hp = 0;
     }
-}
-
-void Player::changeHP(float damage){
-    hp = hp - damage;
-    if(hp<=0){
-        hp = 0;
+    if(hp>=4){
+        hp = 4;
     }
 }
+
 void Player::setBurningTrue(){
    isBurning = true;
 }

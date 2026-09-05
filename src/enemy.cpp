@@ -6,8 +6,9 @@ Enemy::Enemy(sf::Vector2f givenPosition , float givenSpeed)
       :bodyE({40.f,100.f}),
       speed(givenSpeed),
       respawned(false),
-      damage(4),
-      didIscore(false)
+      damage(2),
+      didIscore(false),
+      didIdamage(false)
 
 {
     bodyE.setPosition(givenPosition);
@@ -19,6 +20,7 @@ void Enemy::move(){
     respawned = false;
     if(bodyE.getPosition().x <= -(bodyE.getSize().x)){
         bodyE.setPosition({createRandomSpawn(),295.f});
+        didIdamage = false;
         didIscore = false;
         respawned = true;    
     }
@@ -44,6 +46,7 @@ void Enemy::reset(){
     bodyE.setPosition({createRandomSpawn(),295.f});
     speed = -6.5f;
     didIscore = false;
+    didIdamage = false;
 }
 
 const sf::RectangleShape& Enemy::getEnemyBody() const{
@@ -62,10 +65,29 @@ void Enemy::unmarkScored(){
     didIscore = false;
 }
 
+void Enemy::markDamage(){
+    didIdamage = true;
+}
+
+void Enemy::unmarkDamage(){
+    didIdamage = false;
+}
+
+bool Enemy::getDamageStatus() {
+    return didIdamage;
+}
+
 const bool Enemy::getPassStatus(float x_coordinate) const{
     return (bodyE.getPosition().x <= x_coordinate);
 }
 
- bool Enemy::getScoreStatus() {
+bool Enemy::getScoreStatus() {
     return didIscore;
+}
+
+float Enemy::getSpeed()const{
+    return speed;
+}
+void Enemy::setSpeed(float Speed){
+    speed = Speed;
 }

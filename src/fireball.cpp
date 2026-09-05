@@ -5,9 +5,7 @@
 Fireball::Fireball()
     :fire(25.f),
     speed(-20.f),
-    respawned(true),
-    damage(1)
-
+    respawned(true)
 {
     fire.setOrigin({25.f,25.f});
     fire.setPosition(createRandomSpawn());
@@ -19,7 +17,7 @@ sf::Vector2f Fireball::createRandomSpawn(){
     std::random_device rd;
     std::mt19937 gen{rd()};
 
-    std::uniform_real_distribution<float> distX(2000,6000);
+    std::uniform_real_distribution<float> distX(3000,7000);
     std::uniform_real_distribution<float> distY(85.f, 370.f);
 
     float x = distX(gen);
@@ -50,6 +48,6 @@ bool Fireball::getRespawnedStatus(){
     return respawned;
 }
 
-const int Fireball::getFireDamage()const{
-    return damage;
+void Fireball::setSpeed(float Speed){
+    speed = Speed;
 }
