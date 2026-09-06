@@ -1,11 +1,14 @@
 #include<SFML/Graphics.hpp>
+#include<SFML/Audio.hpp>
 #include "fireball.hpp"
 #include <random>
 
 Fireball::Fireball()
     :fire(25.f),
     speed(-20.f),
-    respawned(true)
+    respawned(true),
+    fireSpawnBuffer("assets/audio/fireSpawn.mp3"),
+    fireSpawnSound(fireSpawnBuffer)
 {
     fire.setOrigin({25.f,25.f});
     fire.setPosition(createRandomSpawn());
@@ -28,6 +31,7 @@ sf::Vector2f Fireball::createRandomSpawn(){
 
 void Fireball::reset(){
     fire.setPosition(createRandomSpawn());
+    fireSpawnSound.play();
     speed = -20.f;
 }
 
@@ -40,6 +44,7 @@ void Fireball::move(){
     respawned = false;
     if(fire.getPosition().x <= -(fire.getRadius())){
         fire.setPosition(createRandomSpawn());
+        fireSpawnSound.play();
         respawned = true;    
     }
 }

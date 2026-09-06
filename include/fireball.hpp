@@ -1,11 +1,13 @@
 #pragma once
 #include<SFML/Graphics.hpp>
-
+#include<SFML/Audio.hpp>
 class Fireball{
     private:
     sf::CircleShape fire;
     float speed;
     bool respawned;
+    sf::SoundBuffer fireSpawnBuffer;
+    sf::Sound fireSpawnSound;
 
 
 
@@ -18,4 +20,5 @@ class Fireball{
     sf::Vector2f createRandomSpawn();
     bool getRespawnedStatus();
     void setSpeed(float Speed);
+
 };

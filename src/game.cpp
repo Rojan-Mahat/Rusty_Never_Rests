@@ -2,6 +2,7 @@
 #include <cmath>
 #include<random>
 #include<vector>
+#include <SFML/Audio.hpp>
 
 Game::Game()
     :screen (sf::VideoMode({1200,800}),"DinoRunner"),
@@ -29,7 +30,49 @@ Game::Game()
     flightActive(false),
     godActive(false),
     summonGod(0),
-    powerDuration(0)
+    powerDuration(0),
+    safety(0),
+
+   
+    collisionBuffer("assets/audio/collision.mp3"),
+    collisionSound(collisionBuffer),
+
+    fireBuffer("assets/audio/fire.mp3"),
+    fireSound(fireBuffer),
+
+    electricBuffer("assets/audio/electricity.mp3"),
+    electricSound(electricBuffer),
+
+    powerupBuffer("assets/audio/powerup.mp3"),
+    powerupSound(powerupBuffer),
+
+    godModeBuffer("assets/audio/godmode.mp3"),
+    godModeSound(godModeBuffer),
+
+    splashBuffer("assets/audio/splash.mp3"),
+    splashSound(splashBuffer),
+
+    gameOverBuffer("assets/audio/gameover.mp3"),
+    gameOverSound(gameOverBuffer),
+
+    electricFieldBuffer("assets/audio/electricField.mp3"),
+    electricFieldSound(electricFieldBuffer),
+
+    gameplayMusic("assets/audio/gameplay.mp3"),
+    gameOverMusic("assets/audio/game_over.mp3"),
+
+    fireCollisionBuffer("assets/audio/fireCollision.wav"),
+    fireCollisionSound(fireCollisionBuffer),
+
+    shieldBuffer("assets/audio/shieldLoop.wav"),
+    shieldSound(shieldBuffer),
+
+    electricModeBuffer("assets/audio/electricModeLoop.wav"),
+    electricModeSound(electricModeBuffer),
+
+    flightModeBuffer("assets/audio/flightMode.wav"),
+    flightModeSound(flightModeBuffer)
+
 {
     screen.setFramerateLimit(60);
     scoreText.setPosition({1000.f, 12.f});
@@ -48,6 +91,20 @@ Game::Game()
 
     electricityTime = electricityTimeGenerator();
     initial_speed_enemy.resize(enemies.size());
+
+    collisionSound.setVolume(70.f);
+
+    gameplayMusic.setLooping(true);
+    gameplayMusic.setVolume(70.f);
+    gameplayMusic.play();
+    splashSound.setVolume(50.f);
+
+    gameOverMusic.setLooping(false);
+    shieldSound.setLooping(true);
+    electricModeSound.setLooping(true);
+
+    flightModeSound.setLooping(false);
+    fireCollisionSound.setLooping(false);
 }
     
 sf::RectangleShape Game::createGround(){
@@ -77,6 +134,12 @@ void Game::reset(){
     flightActive = false;
     godActive = false;
     reStartPowerUps();
+    fireSound.stop();
+    shieldSound.stop();
+    electricModeSound.stop();
+    flightModeSound.stop();
+    gameOverMusic.stop();
+    safety = 0;
 }
 
 void Game::drawGround(){
@@ -120,7 +183,6 @@ void Game::restartGame(){
 float Game::createRandom(int a , int b){
     std::random_device rd;
     std::mt19937 gen{rd()};
-
     std::uniform_real_distribution<float> distX(a,b);
     float x = distX(gen);
     return x;
@@ -162,7 +224,7 @@ void Game::setRandomType(){
         power.getPowerBody().setFillColor(sf::Color(250, 204, 21));
     }
 
-    if(summonGod % 10 == 0){
+    if(summonGod % 4 == 0){
         power.setType(Powerup::Type::GodMode);
         power.getPowerBody().setFillColor(sf::Color(249, 115, 22));
     }
@@ -172,6 +234,10 @@ void Game::electricution(float dt){
     gameTimer += dt;
 
     if(gameTimer >= electricityTime - 0.65 && gameTimer < electricityTime){
+        if(!electricWarning){
+            electricFieldSound.play();
+        }
+
         electricWarning = true;
         warningFlashTimer+=dt;
 
@@ -194,9 +260,15 @@ void Game::electricution(float dt){
 
 void Game::checkElectricution(){
     if(!onLand){
-
-        if(!electricalShield)
+        if(!electricalShield){
+            electricSound.play();
             player.changeHP(2);
+        }
+        else{       
+            score++;
+            if(bestScore < score)
+                bestScore = score;
+        }
     }
 }
 
@@ -250,6 +322,7 @@ void Game::trackOxygen(float dt){
         if(player.getBurningState()){
             player.setBurningFalse();
             burnTimer = 0;
+            fireSound.stop();
         }
         oxygen -= 20*dt;
         if(oxygen <= 0){
@@ -264,42 +337,25 @@ void Game::trackOxygen(float dt){
 }
 
 void Game::updateOxygenText(float dt){
-    // Show oxygen in clean steps:
-    // 100, 90, 80, 70...
-    int displayedOxygen =
-        static_cast<int>(std::ceil(oxygen / 10.f) * 10.f);
+    int displayedOxygen = static_cast<int>(std::ceil(oxygen / 10.f) * 10.f);
 
-    if(displayedOxygen > 100){
+    if(displayedOxygen > 100)
         displayedOxygen = 100;
-    }
 
-    if(displayedOxygen < 0){
+    if(displayedOxygen < 0)
         displayedOxygen = 0;
-    }
 
-    oxygenText.setString(
-        "OXYGEN " + std::to_string(displayedOxygen)
-    );
+    oxygenText.setString("OXYGEN " + std::to_string(displayedOxygen));
 
-    // Color coding
-    if(oxygen > 60.f){
-        oxygenText.setFillColor(
-            sf::Color(56, 189, 248)
-        );
-    }
+    if(oxygen > 60.f)
+        oxygenText.setFillColor(sf::Color(56, 189, 248));
+    
+    else if(oxygen > 30.f)
+        oxygenText.setFillColor(sf::Color(250, 204, 21));
 
-    else if(oxygen > 30.f){
-        oxygenText.setFillColor(
-            sf::Color(250, 204, 21)
-        );
-    }
-
-    else{
-        oxygenText.setFillColor(
-            sf::Color(248, 113, 113)
-        );
-    }
-    // Blink only while underwater
+    else
+        oxygenText.setFillColor(sf::Color(248, 113, 113));
+    
     if(!onLand){
         oxygenBlinkTimer += dt;
         if(oxygenBlinkTimer >= 0.5f){
@@ -336,8 +392,7 @@ void Game::drawTexts(){
         screen.draw(oxygenText);
     }
     if(poweredState){
-        int secondsLeft =
-            static_cast<int>(std::ceil(powerDuration - powerUpTimer));
+        int secondsLeft = static_cast<int>(std::ceil(powerDuration - powerUpTimer));
         std::string powerName;
         if(godActive)
             powerName = "GOD MODE";
@@ -366,7 +421,8 @@ void Game::updateScore(){
                 bestScore = score;
             }
             if(score%3 == 0 && !godActive){
-                enemy.increaseDifficulty(0.5);
+                for(auto& enemy: enemies)
+                    enemy.increaseDifficulty(0.7);
             }
         }
         if(enemy.getRespawnedStatus()){
@@ -399,6 +455,8 @@ void Game::checkFireContact(){
         float distance = sqrt(dx*dx + dy*dy);
         if(distance <=  fire.getFireballBody().getRadius() && (!player.getBurningState())){
             if(!collisionShield){
+                fireCollisionSound.play();
+                fireSound.play();
                 player.setBurningTrue();
             }
         }
@@ -421,6 +479,8 @@ void Game::checkPlayer(float dt){
     }
 
     if(player.getPlayerhp()<=0){
+        gameOverSound.play();
+        gameOverMusic.play();
         pauseGame();
     }
 }
@@ -440,6 +500,7 @@ void Game::checkCollision(){
             if((enemy.getEnemyBody().getPosition().y <= player.getPlayerBody().getPosition().y + player.getPlayerBody().getSize().y) && (!enemy.getDamageStatus())){
                 enemy.markDamage();
                 if(!collisionShield){
+                    collisionSound.play();
                     player.changeHP(enemy.getEnemyDamage());
                     break;
                 }
@@ -496,25 +557,30 @@ void Game::disable_collision_shield(){
 }
 
 void Game::noDamage(){
+    shieldSound.play();
     poweredState = true;
     powerDuration = 12;
     enable_collision_shield();
 }
 
 void Game::flightMode(){
+    flightModeSound.play();
     powerDuration = 10;
     poweredState = true;
     flightActive = true;
+    player.cancelJump();
     player.setPlacement({80, 100});
 }
 
 void Game::resistElectricity(){
+    electricModeSound.play();
     poweredState = true;
     powerDuration = 15;
     enable_electrical_shield();
 }
 
 void Game::godMode(){
+    godModeSound.play();
     powerDuration = 7;
     int i = 0;
     for(const auto& enemy:enemies){
@@ -527,31 +593,45 @@ void Game::godMode(){
     player.setBurningFalse();
     enable_electrical_shield();
     enable_collision_shield();
+    player.cancelJump();
     player.setPlacement({80, 100});;
     for(auto& enemy:enemies)
         enemy.setSpeed(-20);
     fire.setSpeed(-40);
 }
 
+void Game::shortSafetyMode(){
+    shieldSound.play();
+    poweredState = true;
+    powerDuration = 3;
+    enable_collision_shield();
+}
+
+
 
 void Game::providePower(){
     if(power.getType()==Powerup::Type::Health){
+        powerupSound.play();
         player.changeHP(-4);
     }
 
     else if(power.getType()==Powerup::Type::Shield){
+        powerupSound.play();
         noDamage();
     }
 
     else if(power.getType()==Powerup::Type::Flight){
+        powerupSound.play();
         flightMode();
     }
 
     else if(power.getType()==Powerup::Type::ElectricResist){
+        powerupSound.play();
         resistElectricity();
     }
 
     else if(power.getType()==Powerup::Type::GodMode){
+        powerupSound.play();
         godMode();
     }
 }
@@ -572,8 +652,9 @@ void Game::run(){
                         }
                     }
                     else{
-                        if(!flightActive && !godActive)
+                        if(!flightActive && !godActive && !player.isPlayerJumping()){
                             player.checkJump();
+                        }
                     }
                 }
             }
@@ -589,6 +670,7 @@ void Game::run(){
                     if(!godActive && !flightActive){
                         onLand = false;
                         stateChanger();
+                        splashSound.play();
                     }
                     else{
                         player.setPlacement({80,215});
@@ -601,9 +683,18 @@ void Game::run(){
                     if(!onLand){
                             onLand = true;
                             stateChanger();
+                            splashSound.play();
                     }
                     else if(flightActive || godActive){
                         player.setPlacement({80,100});
+                    }
+                }
+            }
+            if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()){
+                if ((keyPressed->code == sf::Keyboard::Key::Enter) && (!paused) && (!poweredState) && (onLand)){
+                    safety++;
+                    if(safety <= 3){
+                        shortSafetyMode();
                     }
                 }
             }
@@ -619,9 +710,8 @@ void Game::run(){
         if(poweredState && !paused){
             powerUpTimer+= dt;
             if(godActive){
-                if(powerUpTimer >= 7){
+                if(powerUpTimer >= powerDuration){
                     powerUpTimer = 0;
-                    poweredState = false;
                     godActive = false;
                     player.setPlacement({80,345});
                     disable_collision_shield();
@@ -630,30 +720,38 @@ void Game::run(){
                             enemies[i].setSpeed(initial_speed_enemy[i]);
                         }
                     fire.reset();
+                    enable_collision_shield();
+                    shieldSound.play();
+                    powerDuration = 2;
                     }
                 }
             
             else if(collisionShield){
-                if(powerUpTimer >= 12){
+                if(powerUpTimer >= powerDuration){
                     poweredState = false;
                     disable_collision_shield();
+                    shieldSound.stop();
                     powerUpTimer = 0;
                 }
             }
 
             else if(electricalShield){
-                if(powerUpTimer >= 15){
+                if(powerUpTimer >= powerDuration){
                     poweredState = false;
                     disable_electrical_shield();
+                    electricModeSound.stop();
                     powerUpTimer = 0;
                 }
             }
 
             else if(flightActive){
-                if(powerUpTimer >= 10){
-                    poweredState = false;
+                if(powerUpTimer >= powerDuration){
                     flightActive = false;
                     player.setPlacement({80,345});
+                    flightModeSound.stop();
+                    enable_collision_shield();
+                    shieldSound.play();
+                    powerDuration = 2;
                     powerUpTimer = 0;
                 }
             }
@@ -665,8 +763,10 @@ void Game::run(){
             checkPlayer(dt);
             electricution(dt);
             runPowerUps();
-            for(auto& enemy: enemies)
-                enemy.move();
+            for(std::size_t i = 0; i < enemies.size(); i++){
+                std::size_t other = (i == 0) ? 1 : 0;   
+                enemies[i].move(enemies[other].getEnemyBody().getPosition().x);
+            }
             fire.move();
             if(onLand){
                 PowerCollision();

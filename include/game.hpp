@@ -5,6 +5,8 @@
 #include"powerup.hpp"
 #include<SFML/Graphics.hpp>
 #include<random>
+#include <SFML/Audio.hpp>
+
 class Game{
     private:
     sf::RenderWindow screen;
@@ -38,6 +40,7 @@ class Game{
     std::vector<float> initial_speed_enemy;
     int summonGod;
     float powerDuration;
+    int safety;
 
     float oxygenBlinkTimer = 0.f;
     bool oxygenTextVisible = true;
@@ -45,13 +48,49 @@ class Game{
     bool electricWarning = false;
     bool warningRed = true;
     float warningFlashTimer = 0.f;
+
+    sf::Music gameplayMusic;
+    sf::Music gameOverMusic;
+
+    sf::SoundBuffer collisionBuffer;
+    sf::Sound collisionSound;
+
+    sf::SoundBuffer fireBuffer;
+    sf::Sound fireSound;
+
+    sf::SoundBuffer electricBuffer;
+    sf::Sound electricSound;
+
+    sf::SoundBuffer powerupBuffer;
+    sf::Sound powerupSound;
+
+    sf::SoundBuffer godModeBuffer;
+    sf::Sound godModeSound;
+
+    sf::SoundBuffer splashBuffer;
+    sf::Sound splashSound;
+
+    sf::SoundBuffer gameOverBuffer;
+    sf::Sound gameOverSound;
+
+    
+    sf::SoundBuffer electricFieldBuffer;
+    sf::Sound electricFieldSound;
+
     
 
+    sf::SoundBuffer fireCollisionBuffer;
+    sf::Sound fireCollisionSound;
 
-    
+    sf::SoundBuffer shieldBuffer;
+    sf::Sound shieldSound;
 
+    sf::SoundBuffer electricModeBuffer;
+    sf::Sound electricModeSound;
 
-
+    sf::SoundBuffer flightModeBuffer;
+    sf::Sound flightModeSound;
+ 
 
     public:
     Game();
@@ -80,6 +119,7 @@ class Game{
     void reStartPowerUps();
     void providePower();
 
+
     void updateScore();
     void drawTexts();
     void updateOxygenText(float dt);
@@ -99,5 +139,6 @@ class Game{
     void enable_electrical_shield();
     void disable_electrical_shield();
     void setRandomType();
+    void shortSafetyMode();
     
 };

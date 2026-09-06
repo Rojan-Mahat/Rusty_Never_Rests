@@ -11,5 +11,7 @@ add_executable(DinoRunner src/main.cpp
                           src/powerup.cpp)
 
 find_package(SFML 3 COMPONENTS Graphics REQUIRED)
+find_package(SFML 3 REQUIRED COMPONENTS Graphics Audio)
 target_link_libraries(DinoRunner PRIVATE SFML::Graphics)
+target_link_libraries(DinoRunner PRIVATE SFML::Graphics SFML::Audio)
 target_include_directories(DinoRunner PRIVATE include)

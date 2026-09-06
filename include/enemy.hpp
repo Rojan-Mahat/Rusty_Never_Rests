@@ -1,5 +1,6 @@
 #pragma once
 #include<SFML/Graphics.hpp>
+
 class Enemy{
     private:
     sf::RectangleShape bodyE;
@@ -14,7 +15,7 @@ class Enemy{
     public:
     Enemy(sf::Vector2f , float speed);
     const sf::RectangleShape& getEnemyBody() const;
-    void move();
+    void move(float otherEnemy);
     void reset();
     
     float getSpeed() const;

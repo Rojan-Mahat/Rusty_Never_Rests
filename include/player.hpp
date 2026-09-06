@@ -1,5 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
+
 class Player{
     private:
     sf::RectangleShape bodyP;
@@ -7,6 +9,15 @@ class Player{
     int hp;
     float speed;
     bool isBurning;
+
+
+    sf::SoundBuffer jumpBuffer;
+    sf::Sound jumpSound;
+
+    sf::SoundBuffer landingBuffer;
+    sf::Sound landingSound;
+
+
 
 
     public:
@@ -23,7 +34,10 @@ class Player{
     void setBurningTrue();
     void setBurningFalse();
     const bool getBurningState() const;
-
+    void cancelJump();
     void setPlacement(sf::Vector2f coordinates);
+
+
+    
 
 };

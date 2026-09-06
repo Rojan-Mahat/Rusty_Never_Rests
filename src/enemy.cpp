@@ -1,6 +1,7 @@
 #include "enemy.hpp"
 #include<SFML/Graphics.hpp>
 #include<random>
+#include<cmath>
 
 Enemy::Enemy(sf::Vector2f givenPosition , float givenSpeed)
       :bodyE({40.f,100.f}),
@@ -15,11 +16,14 @@ Enemy::Enemy(sf::Vector2f givenPosition , float givenSpeed)
     bodyE.setFillColor(sf::Color(251, 113, 133));
 }
 
-void Enemy::move(){
+void Enemy::move(float otherEnemy){
     bodyE.move({speed,0.f});
     respawned = false;
     if(bodyE.getPosition().x <= -(bodyE.getSize().x)){
-        bodyE.setPosition({createRandomSpawn(),295.f});
+        float newX = createRandomSpawn();   
+        if(std::abs(otherEnemy - newX) < 150.f)
+            newX = otherEnemy + 200.f;
+        bodyE.setPosition({newX,295.f});
         didIdamage = false;
         didIscore = false;
         respawned = true;    

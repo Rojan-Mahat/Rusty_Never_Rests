@@ -1,14 +1,24 @@
 #include <SFML/Graphics.hpp>
 #include "player.hpp"
+#include <SFML/Audio.hpp>
 Player::Player()
         :bodyP({80,50}),
         inAir(false),
         speed(0.f),
         hp(4),
-        isBurning(false)
+        isBurning(false),
+
+        jumpBuffer("assets/audio/jumping.mp3"),
+        jumpSound(jumpBuffer),
+
+        landingBuffer("assets/audio/landing.mp3"),
+        landingSound(landingBuffer)
+
+
 {
     bodyP.setPosition({80,345});
     bodyP.setFillColor(sf::Color(56, 189, 248));
+
 }
 
 const sf::RectangleShape& Player::getPlayerBody()const{
@@ -22,6 +32,7 @@ void Player::setPlacement(sf::Vector2f coordinates){
 
 void Player::checkJump(){
     if(bodyP.getPosition().y + bodyP.getSize().y == 395 && (!inAir)){
+        jumpSound.play();
         speed = -21.5;
         inAir = true;
     }
@@ -40,11 +51,13 @@ void Player::Jump(){
     if(inAir){
         bodyP.move({0.f,speed});
         speed++;
-    }
-    if(bodyP.getPosition().y + bodyP.getSize().y == 395){
-        inAir = false;
-        speed = 0.f;
-        return;
+        
+        if(bodyP.getPosition().y + bodyP.getSize().y == 395){
+            landingSound.play();
+            inAir = false;
+            speed = 0.f;
+            return;
+        }
     }
 }
 
@@ -85,4 +98,9 @@ void Player::changeWorld(){
     else{
         bodyP.setPosition({80,345});
     }
+}
+
+void Player::cancelJump(){
+    inAir = false;
+    speed = 0.f;
 }
