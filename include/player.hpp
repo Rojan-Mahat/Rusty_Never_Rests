@@ -98,5 +98,7 @@ class Player{
     void useGodAura();
     void clearAura();
     void triggerZapEffect();
+    void enableSFX();
+    void disableSFX();
 
 };

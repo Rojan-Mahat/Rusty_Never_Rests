@@ -50,7 +50,9 @@ float Enemy::createRandomSpawn(){
 }
 
 void Enemy::increaseDifficulty(float mag){
-    speed -= mag;
+   if(speed<=-10)
+        speed -= mag;
+    
 }
 
 bool Enemy::getRespawnedStatus(){

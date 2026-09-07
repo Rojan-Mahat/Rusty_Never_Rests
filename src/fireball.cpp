@@ -8,11 +8,12 @@ Fireball::Fireball()
     :fire(25.f),
     speed(-20.f),
     respawned(true),
-    fireSpawnBuffer("assets/audio/fireSpawn.mp3"),
+    fireSpawnBuffer("assets/audio/sfx/hazards/fireSpawn.mp3"),
     fireSpawnSound(fireSpawnBuffer),
 
     fireTexture("assets/sprites/enemies/fireball.png"),
-    fireSprite(fireTexture)
+    fireSprite(fireTexture),
+    soundPlayed(false)
 {
     fire.setOrigin({25.f,25.f});
     fire.setPosition(createRandomSpawn());
@@ -38,8 +39,8 @@ sf::Vector2f Fireball::createRandomSpawn(){
 
 void Fireball::reset(){
     fire.setPosition(createRandomSpawn());
-    fireSpawnSound.play();
     speed = -20.f;
+    soundPlayed = false;
     fireSprite.setPosition({fire.getPosition().x - 45.f , fire.getPosition().y - 45.f});
 }
 
@@ -50,10 +51,15 @@ const sf::CircleShape& Fireball::getFireballBody() const{
 void Fireball::move(){
     fire.move({speed,0.f});
     respawned = false;
+    if(!soundPlayed && fire.getPosition().x <= World::SCREEN_WIDTH + fire.getRadius()){
+            fireSpawnSound.play();
+            soundPlayed = true;
+        }
+
     if(fire.getPosition().x <= -(fire.getRadius())){
         fire.setPosition(createRandomSpawn());
-        fireSpawnSound.play();
-        respawned = true;    
+        respawned = true; 
+        soundPlayed = false;
     }
     fireSprite.setPosition({fire.getPosition().x - 37.f , fire.getPosition().y - 45.f});
 }
@@ -68,4 +74,12 @@ void Fireball::setSpeed(float Speed){
 
 const sf::Sprite& Fireball::getFireballSprite() const{
     return fireSprite;
+}
+
+void Fireball::enableSFX(){
+    fireSpawnSound.setVolume(100.f);
+}
+
+void Fireball::disableSFX(){
+    fireSpawnSound.setVolume(0.f);
 }

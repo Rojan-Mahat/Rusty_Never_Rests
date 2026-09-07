@@ -11,16 +11,16 @@ Player::Player()
     isBurning(false),
     animate(true),
 
-    jumpBuffer("assets/audio/jumping.mp3"),
+    jumpBuffer("assets/audio/sfx/player/jumping.mp3"),
     jumpSound(jumpBuffer),
 
-    landingBuffer("assets/audio/landing.mp3"),
+    landingBuffer("assets/audio/sfx/player/landing.mp3"),
     landingSound(landingBuffer),
 
-    runTexture("assets/sprites/frogRunning/frog_run_sheet.png"),
-    jumpTexture("assets/sprites/frogJumping/frog_jump_sheet.png"),
-    flyTexture("assets/sprites/frogFlying/frog_fly_sheet.png"),
-    swimTexture("assets/sprites/frogSwimming/frog_swim_sheet.png"),
+    runTexture("assets/sprites/player/running/frog_run_sheet.png"),
+    jumpTexture("assets/sprites/player/jumping/frog_jump_sheet.png"),
+    flyTexture("assets/sprites/player/flying/frog_fly_sheet.png"),
+    swimTexture("assets/sprites/player/swimming/frog_swim_sheet.png"),
 
     runSprite(runTexture),
 
@@ -28,7 +28,7 @@ Player::Player()
     animationTimer(0.f),
     frameDuration(0.04f),
 
-    auraTexture("assets/sprites/playerEffects/powered_aura_sheet.png"),
+    auraTexture("assets/sprites/player/effects/powered_aura_sheet.png"),
     auraSprite(auraTexture),
     auraVisible(false),
 
@@ -365,4 +365,14 @@ void Player::updateDamageEffects(float dt){
         return;
     }
     runSprite.setColor(sf::Color::White);
+}
+
+void Player::enableSFX(){
+    jumpSound.setVolume(100.0f);
+    landingSound.setVolume(100.f);
+}
+
+void Player::disableSFX(){
+    jumpSound.setVolume(0.f);
+    landingSound.setVolume(0.f);
 }

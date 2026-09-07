@@ -1,7 +1,5 @@
 #pragma once
-
 namespace World{
-
     inline constexpr float SCREEN_WIDTH = 1200.f;
     inline constexpr float SCREEN_HEIGHT = 800.f;
 

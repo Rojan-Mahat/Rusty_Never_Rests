@@ -11,6 +11,7 @@ class Fireball{
 
     sf::Texture fireTexture;
     sf::Sprite fireSprite;
+    bool soundPlayed;
 
 
 
@@ -25,5 +26,7 @@ class Fireball{
     void setSpeed(float Speed);
 
     const sf::Sprite& getFireballSprite() const;
+    void enableSFX();
+    void disableSFX();
 
 };

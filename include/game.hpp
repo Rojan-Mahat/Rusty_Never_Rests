@@ -23,7 +23,6 @@ class Game{
     sf::RectangleShape runningPath;
     sf::Font scoreFont;
     sf::Text scoreText;
-    sf::Text hpText;
     sf::Text oxygenText;
     sf::Text bestScoreText;
     sf::Text powerDurationText;
@@ -100,6 +99,9 @@ class Game{
     sf::Sprite backgroundSprite;
     sf::Texture underwaterTexture;
     std::vector<sf::Sprite> underwaterSprites;
+    sf::Texture healthBarTexture;
+    sf::Sprite healthBarSprite;
+    void updateHealthBattery();
 
     int underwaterFrame;
     float underwaterTimer;
@@ -151,7 +153,7 @@ class Game{
     sf::Text sfxText;
     sf::Text howToBodyText;
     sf::Text backText;
-    sf::Text musicText;\
+    sf::Text musicText;
 
     bool musicEnabled;
     bool sfxEnabled;

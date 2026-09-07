@@ -9,9 +9,7 @@
 
 Game::Game()
     :screen (sf::VideoMode({1200,800}),"DinoRunner"),
-
-
-    backgroundTexture("assets/background/background.png"),
+    backgroundTexture("assets/background/scene/background.png"),
     backgroundSprite(backgroundTexture),
 
     runningPath(createGround()),
@@ -26,10 +24,9 @@ Game::Game()
     enemies({Enemy({1160,World::ENEMY_Y},-6.5,enemy1Texture,{-43.f, 5.f},{70.f, 48.f},-30.f),Enemy({1700,World::ENEMY_Y},-6.5,enemy2Texture,{-43.f, -9.f},{65.f, 55.f},-20.f)}),
 
     power({createRandom(2500,8000),World::POWER_Y},createRandom(-15,-10),Powerup::Type::Health),
-    scoreFont("assets/font.ttf"),
+    scoreFont("assets/fonts/font.ttf"),
     scoreText(scoreFont, "SCORE 0", 30),
     bestScoreText(scoreFont, "SCORE 0", 30),
-    hpText(scoreFont, "HEALTH  4", 30),
     oxygenText(scoreFont ,"OXYGEN 100",30),
     powerDurationText(scoreFont ,"Power Time 0",30),
     gameTimer(0),
@@ -47,68 +44,72 @@ Game::Game()
     waterZapFlashTimer(0.f),
     groundEffectTimer(0.f),
    
-    collisionBuffer("assets/audio/collision.mp3"),
+    collisionBuffer("assets/audio/sfx/hazards/collision.mp3"),
     collisionSound(collisionBuffer),
 
-    fireBuffer("assets/audio/fire.mp3"),
+    fireBuffer("assets/audio/sfx/hazards/fire.mp3"),
     fireSound(fireBuffer),
 
-    electricBuffer("assets/audio/electricity.mp3"),
+    electricBuffer("assets/audio/sfx/hazards/electricity.mp3"),
     electricSound(electricBuffer),
 
-    powerupBuffer("assets/audio/powerup.mp3"),
+    powerupBuffer("assets/audio/sfx/powerups/powerup.mp3"),
     powerupSound(powerupBuffer),
 
-    godModeBuffer("assets/audio/godmode.mp3"),
+    godModeBuffer("assets/audio/sfx/powerups/godmode.mp3"),
     godModeSound(godModeBuffer),
 
-    splashBuffer("assets/audio/splash.mp3"),
+    splashBuffer("assets/audio/sfx/player/splash.mp3"),
     splashSound(splashBuffer),
 
-    gameOverBuffer("assets/audio/gameover.mp3"),
+    gameOverBuffer("assets/audio/sfx/game/gameover.mp3"),
     gameOverSound(gameOverBuffer),
 
-    electricFieldBuffer("assets/audio/electricField.mp3"),
+    electricFieldBuffer("assets/audio/sfx/hazards/electricField.mp3"),
     electricFieldSound(electricFieldBuffer),
 
-    gameplayMusic("assets/audio/gameplay.mp3"),
-    gameOverMusic("assets/audio/GameEnding_SilenceIncluded.mp3"),
-    menuMusic("assets/audio/Start.mp3"),
+    gameplayMusic("assets/audio/music/gameplay.mp3"),
+    gameOverMusic("assets/audio/music/game_over.mp3"),
+    menuMusic("assets/audio/music/Start.mp3"),
 
-    fireCollisionBuffer("assets/audio/fireCollision.wav"),
+    fireCollisionBuffer("assets/audio/sfx/hazards/fireCollision.wav"),
     fireCollisionSound(fireCollisionBuffer),
 
-    shieldBuffer("assets/audio/shieldLoop.wav"),
+    shieldBuffer("assets/audio/sfx/powerups/shieldLoop.wav"),
     shieldSound(shieldBuffer),
 
-    electricModeBuffer("assets/audio/electricModeLoop.wav"),
+    electricModeBuffer("assets/audio/sfx/powerups/electricModeLoop.wav"),
     electricModeSound(electricModeBuffer),
 
-    flightModeBuffer("assets/audio/player_flying.mp3"),
+    flightModeBuffer("assets/audio/sfx/player/player_flying.mp3"),
     flightModeSound(flightModeBuffer),
     
-    underwaterTexture("assets/background/underwater_sheet.png"),
+    underwaterTexture("assets/background/water/underwater_sheet.png"),
     underwaterFrame(0),
     underwaterTimer(0.f),
     underwaterFrameDuration(0.25f),
 
-    farTexture("assets/background/far.png"),
+    farTexture("assets/background/parallax/far.png"),
     farA(farTexture),
     farB(farTexture),
     farSpeed(12.f),
     farWidth(0.f),
 
-    midTexture("assets/background/mid.png"),
+    midTexture("assets/background/parallax/mid.png"),
     midA(midTexture),
     midB(midTexture),
     midSpeed(30.f),
     midWidth(0.f),
 
-    closeTexture("assets/background/close.png"),
+    closeTexture("assets/background/parallax/close.png"),
     closeA(closeTexture),
     closeB(closeTexture),
     closeSpeed(65.f),
     closeWidth(0.f),
+
+    healthBarTexture("assets/sprites/ui/healthBar.png"),
+    healthBarSprite(healthBarTexture),
+
     menuState(MenuState::Main),
     menuTitleText(scoreFont, "RUSTY NEVER RESTS!", 48),
     playText(scoreFont, "PLAY..", 38),
@@ -120,8 +121,7 @@ Game::Game()
     menuFlavorText(scoreFont, "RUN  |    DIVE   |   SURVIVE", 30),
     previousMenuState(MenuState::Main),
 
-    howToBodyText(
-        scoreFont,
+    howToBodyText(scoreFont,
         "SPACE / W / UP    JUMP / SURFACE\n\n"
         "S / DOWN          DIVE\n\n"
         "ENTER             EMERGENCY SHIELD\n\n"
@@ -131,7 +131,6 @@ Game::Game()
         "COLLECT POWERUPS AND BEAT YOUR BEST SCORE",
         23
     ),
-
     backText(scoreFont, "BACK", 30),
     musicText(scoreFont, "MUSIC: ON", 30),
     musicEnabled(true),
@@ -154,9 +153,6 @@ Game::Game()
 
     powerDurationText.setPosition({470.f, 55.f});
     powerDurationText.setFillColor(sf::Color(56, 189, 248));
-
-    hpText.setPosition({500,12.f});
-    hpText.setFillColor(sf::Color(34, 197, 94));
 
     bestScoreText.setPosition({50,12.f});
     bestScoreText.setFillColor(sf::Color(248, 250, 252));
@@ -248,12 +244,15 @@ Game::Game()
     finalScoreText.setFillColor(sf::Color(250, 204, 21));
     beatScoreText.setPosition({410.f, 350.f});
     beatScoreText.setFillColor(sf::Color(180, 225, 255));
-    gameOverQuoteText.setPosition({350.f, 630.f});//420,390
+    gameOverQuoteText.setPosition({350.f, 630.f});
     gameOverQuoteText.setFillColor(sf::Color(120, 220, 255));
-    playAgainText.setPosition({500.f, 420.f});//500.485
+    playAgainText.setPosition({500.f, 420.f});
     playAgainText.setFillColor(sf::Color(90, 230, 150));
     quitText.setPosition({565.f, 510.f});
-    quitText.setFillColor(sf::Color(210, 215, 225));//555 ,550
+    quitText.setFillColor(sf::Color(210, 215, 225));
+
+    healthBarSprite.setScale({0.35f, 0.35f});
+    healthBarSprite.setPosition({690.f, 10.f});
 
 }
     
@@ -272,6 +271,13 @@ void Game::drawMenu(){
     screen.draw(overlay);
 
     if(menuState==MenuState::Main){
+        menuTitleText.setString("RUSTY NEVER RESTS!");
+        menuTitleText.setPosition({340.f, 150.f});
+        playText.setString("PLAY..");
+        playText.setPosition({540.f, 260.f});
+        howToText.setPosition({525.f, 450.f});
+        settingsText.setPosition({510.f, 550.f});
+        
         screen.draw(menuTitleText);
         screen.draw(playText);
         screen.draw(menuFlavorText);
@@ -416,12 +422,25 @@ void Game::drawPowerUps(){
 void Game::pauseGame(){
     paused = true;
     player.pauseAnimation();
-
+    shieldSound.pause();
+    electricModeSound.pause();
+    flightModeSound.pause();
 }
 
 void Game::resumeGame(){
     paused = false;
     player.resumeAnimation();
+    if(sfxEnabled){
+        if(flightActive){
+            flightModeSound.play();
+        }
+        else if(!godActive && electricalShield){
+            electricModeSound.play();
+        }
+        else if(!godActive && collisionShield){
+            shieldSound.play();
+        }
+    }
 }
 
 void Game::restartGame(){
@@ -648,24 +667,34 @@ void Game::updateOxygenText(float dt){
     }
 }
 
+void Game::updateHealthBattery(){
+    int hp = player.getPlayerhp();
+    if(hp <= 0)
+        healthBarSprite.setTextureRect(sf::IntRect({51,241},{379,225}));
+    else if(hp == 1)
+        healthBarSprite.setTextureRect(sf::IntRect({470,241},{381,225}));
+    else if(hp == 2)
+        healthBarSprite.setTextureRect(sf::IntRect({892,241},{381,225}));
+    else if(hp == 3)
+        healthBarSprite.setTextureRect(sf::IntRect({1314,241},{383,225}));
+    else
+        healthBarSprite.setTextureRect(sf::IntRect({1750,241},{379,225}));
+
+    sf::FloatRect bounds = healthBarSprite.getLocalBounds();
+    float x =(World::SCREEN_WIDTH - bounds.size.x * 0.30f) / 2.f;
+    healthBarSprite.setPosition({x, 5.f});
+}
+
 void Game::drawTexts(){
+    updateHealthBattery();
+    screen.draw(healthBarSprite);
+
     scoreText.setString("SCORE " + std::to_string(score));
     screen.draw(scoreText);
 
     bestScoreText.setString("BEST SCORE " + std::to_string(bestScore));
     screen.draw(bestScoreText);
 
-    if(player.getPlayerhp()>2){
-    hpText.setFillColor(sf::Color(34, 197, 94));
-    }
-    else if(player.getPlayerhp()==2){
-        hpText.setFillColor(sf::Color(250, 204, 21));
-    }
-    else{
-        hpText.setFillColor(sf::Color(248, 113, 113));
-    }
-    hpText.setString("HEALTH " + std::to_string(player.getPlayerhp()));
-    screen.draw(hpText);
     if(oxygenTextVisible){
         screen.draw(oxygenText);
     }
@@ -699,9 +728,9 @@ void Game::updateScore(){
                 bestScore = score;
                 saveBestScore();
             }
-            if(score%3 == 0 && !godActive){
+            if(score% 5 == 0 && !godActive){
                 for(auto& enemy: enemies)
-                    enemy.increaseDifficulty(0.4);
+                    enemy.increaseDifficulty(0.25f);
             }
         }
         if(enemy.getRespawnedStatus()){
@@ -978,6 +1007,8 @@ void Game::setSfxEnabled(bool enabled){
         shieldSound.setVolume(0.f);
         electricModeSound.setVolume(0.f);
         flightModeSound.setVolume(0.f);
+        fire.disableSFX();
+        player.disableSFX();
     }
     else{
         collisionSound.setVolume(70.f);
@@ -992,6 +1023,8 @@ void Game::setSfxEnabled(bool enabled){
         shieldSound.setVolume(100.f);
         electricModeSound.setVolume(100.f);
         flightModeSound.setVolume(100.f);
+        fire.enableSFX();
+        player.disableSFX();
     }
 }
 
@@ -1052,7 +1085,7 @@ void Game::run(){
             if(const auto* mousePressed =event->getIf<sf::Event::MouseButtonPressed>()){
                 if(mousePressed->button == sf::Mouse::Button::Left){
                     sf::Vector2i mousePixel =sf::Mouse::getPosition(screen);
-                    sf::Vector2f mousePosition{static_cast<float>(mousePixel.x),static_cast<float>(mousePixel.y)};
+                    sf::Vector2f mousePosition = screen.mapPixelToCoords(mousePixel);
                         if(menuState == MenuState::Main && playText.getGlobalBounds().contains(mousePosition)){
                             menuState = MenuState::Hidden;
                             restartGame();
@@ -1138,10 +1171,6 @@ void Game::run(){
                             player.setPlacement({80,100});
                         }
                     } 
-                     else{
-                        if(player.getPlayerhp()!= 0)
-                            resumeGame();
-                    }
                 }
             }
 
@@ -1206,7 +1235,7 @@ void Game::run(){
             }
 
             if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()){
-                if (keyPressed->code == sf::Keyboard::Key::R){
+                if (keyPressed->code == sf::Keyboard::Key::R && !paused && menuState == MenuState::Hidden){
                     restartGame();
                 }
             }
