@@ -7,4 +7,4 @@ int main(){
     return 0;
 }
 
-//cmake --build build && ./build/DinoRunner
+//cmake --build build && ./build/RustyNeverRests

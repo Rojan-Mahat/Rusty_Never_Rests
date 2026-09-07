@@ -8,7 +8,7 @@
 #include "world.hpp"
 
 Game::Game()
-    :screen (sf::VideoMode({1200,800}),"DinoRunner"),
+    :screen (sf::VideoMode({1200,800}),"Rusty Never Rests"),
     backgroundTexture("assets/background/scene/background.png"),
     backgroundSprite(backgroundTexture),
 
@@ -346,7 +346,7 @@ void Game::loadBestScore(){
     const char* home = std::getenv("HOME");
     if(home == nullptr)
         return;
-    std::string path = std::string(home) + "/.dinorunner_best_score";
+    std::string path = std::string(home) + "/.rusty_never_rests_best_score";
     std::ifstream file(path);
     if(file.is_open())
         file >> bestScore;
@@ -356,7 +356,7 @@ void Game::saveBestScore(){
     const char* home = std::getenv("HOME");
     if(home == nullptr)
         return;
-    std::string path =std::string(home) + "/.dinorunner_best_score";
+    std::string path =std::string(home) + "/.rusty_never_rests_best_score";
     std::ofstream file(path);
     if(file.is_open())
         file << bestScore;
