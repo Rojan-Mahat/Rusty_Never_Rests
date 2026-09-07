@@ -151,8 +151,8 @@ Game::Game()
     screen.setFramerateLimit(60);
     scoreText.setPosition({1000.f, 12.f});
 
-    powerDurationText.setPosition({470.f, 55.f});
-    powerDurationText.setFillColor(sf::Color(56, 189, 248));
+    powerDurationText.setPosition({500.f, 95.f});
+    powerDurationText.setFillColor(sf::Color(180, 160, 230));
 
     bestScoreText.setPosition({50,12.f});
     bestScoreText.setFillColor(sf::Color(248, 250, 252));
