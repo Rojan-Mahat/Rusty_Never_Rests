@@ -19,6 +19,9 @@ class Powerup{
     bool ifPowerAdded;
     bool outOfBounds;
     Type type;
+    sf::Texture powerTexture;
+    sf::Sprite powerSprite;
+    void setSprite();
 
 
     public:
@@ -35,5 +38,6 @@ class Powerup{
     void setBounds(int a);
     Type getType();
     void setType(Type newType);
+    const sf::Sprite& getPowerSprite() const;
 
 };

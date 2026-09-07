@@ -12,7 +12,11 @@ class Game{
     sf::RenderWindow screen;
     sf::Clock frameClock;
     Player player;
+
+    sf::Texture enemy1Texture;
+    sf::Texture enemy2Texture;
     std::vector<Enemy> enemies;
+
     bool paused;
     int score;
     int bestScore;
@@ -51,6 +55,7 @@ class Game{
 
     sf::Music gameplayMusic;
     sf::Music gameOverMusic;
+    sf::Music menuMusic;
 
     sf::SoundBuffer collisionBuffer;
     sf::Sound collisionSound;
@@ -72,12 +77,9 @@ class Game{
 
     sf::SoundBuffer gameOverBuffer;
     sf::Sound gameOverSound;
-
     
     sf::SoundBuffer electricFieldBuffer;
     sf::Sound electricFieldSound;
-
-    
 
     sf::SoundBuffer fireCollisionBuffer;
     sf::Sound fireCollisionSound;
@@ -90,7 +92,83 @@ class Game{
 
     sf::SoundBuffer flightModeBuffer;
     sf::Sound flightModeSound;
- 
+    float waterZapFlashTimer;
+
+    void drawWaterZapEffect();
+
+    sf::Texture backgroundTexture;
+    sf::Sprite backgroundSprite;
+    sf::Texture underwaterTexture;
+    std::vector<sf::Sprite> underwaterSprites;
+
+    int underwaterFrame;
+    float underwaterTimer;
+    float underwaterFrameDuration;
+    void updateUnderwaterAnimation(float dt);
+    void drawUnderwaterAnimation();
+
+    sf::Texture farTexture;
+    sf::Sprite farA;
+    sf::Sprite farB;
+    float farSpeed;
+    float farWidth;
+    void updateFarParallax(float dt);
+    void drawParallax();
+
+    sf::Texture midTexture;
+    sf::Sprite midA;
+    sf::Sprite midB;
+    float midSpeed;
+    float midWidth;
+    void updateMidParallax(float dt);
+
+    sf::Texture closeTexture;
+    sf::Sprite closeA;
+    sf::Sprite closeB;
+    float closeSpeed;
+    float closeWidth;
+    void updateCloseParallax(float dt);
+    float groundEffectTimer;
+    void updateGroundEffect(float dt);
+
+    enum class MenuState{
+        Main,
+        Pause,
+        HowTo,
+        Settings,
+        GameOver,
+        Hidden
+    };
+    MenuState menuState;
+    sf::Text menuTitleText;
+    sf::Text playText;
+    sf::Text challengeText;
+    sf::Text menuBestScoreText;
+    sf::Text howToText;
+    sf::Text settingsText;
+    sf::Text restartText;
+    sf::Text menuFlavorText;
+    sf::Text sfxText;
+    sf::Text howToBodyText;
+    sf::Text backText;
+    sf::Text musicText;\
+
+    bool musicEnabled;
+    bool sfxEnabled;
+
+    MenuState previousMenuState;
+    void drawMenu();
+    void setSfxEnabled(bool enabled);
+    sf::Text gameOverTitleText;
+    sf::Text finalScoreText;
+    sf::Text beatScoreText;
+    sf::Text playAgainText;
+    sf::Text quitText;
+    sf::Text gameOverQuoteText;
+
+    void loadBestScore();
+    void saveBestScore();
+
 
     public:
     Game();
@@ -140,5 +218,6 @@ class Game{
     void disable_electrical_shield();
     void setRandomType();
     void shortSafetyMode();
+    void drawBackground();
     
 };

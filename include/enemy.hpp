@@ -10,10 +10,15 @@ class Enemy{
     bool didIscore;
     bool didIdamage;
 
+    sf::Sprite enemySprite;
+    float spriteOffsetX;
+    float spriteOffsetY;
+    float hitboxOffsetX;
+
 
 
     public:
-    Enemy(sf::Vector2f , float speed);
+    Enemy(sf::Vector2f , float speed, const sf::Texture& texture,sf::Vector2f spriteOffset,sf::Vector2f hitboxSize,float hitboxOffsetX);
     const sf::RectangleShape& getEnemyBody() const;
     void move(float otherEnemy);
     void reset();
@@ -31,5 +36,7 @@ class Enemy{
     void markDamage();
     void unmarkDamage();
     bool getDamageStatus();
+
+    const sf::Sprite& getEnemySprite() const;
 
 };

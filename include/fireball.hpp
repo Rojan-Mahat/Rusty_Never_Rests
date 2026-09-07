@@ -9,6 +9,9 @@ class Fireball{
     sf::SoundBuffer fireSpawnBuffer;
     sf::Sound fireSpawnSound;
 
+    sf::Texture fireTexture;
+    sf::Sprite fireSprite;
+
 
 
 
@@ -20,5 +23,7 @@ class Fireball{
     sf::Vector2f createRandomSpawn();
     bool getRespawnedStatus();
     void setSpeed(float Speed);
+
+    const sf::Sprite& getFireballSprite() const;
 
 };

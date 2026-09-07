@@ -7,11 +7,17 @@ Powerup::Powerup(sf::Vector2f givenLocation, float givenSpeed, Type whatTypeofPo
     type(whatTypeofPower),
     respawn(false),
     ifPowerAdded(false),
-    outOfBounds(false)
+    outOfBounds(false),
+    powerTexture("assets/sprites/powerups/powerup.png"),
+    powerSprite(powerTexture)
 {
+    power.setFillColor(sf::Color(255,0,0,100));
     power.setOrigin({25.f,25.f});
     power.setPosition(givenLocation);
-    power.setFillColor(sf::Color::Green);
+
+    powerSprite.setScale({0.12f, 0.12f});
+    setSprite();
+
 }
 
 const sf::CircleShape& Powerup::getPowerBody()const{
@@ -37,6 +43,7 @@ void Powerup::move(){
         outOfBounds = true;
         respawn = true;
     }
+    powerSprite.setPosition(power.getPosition());
 }
 
 void Powerup::setRespawn(int a){
@@ -80,6 +87,32 @@ Powerup::Type Powerup::getType(){
 
 void Powerup::setType(Type newType){
     type = newType;
+    setSprite();
 }
 
+const sf::Sprite& Powerup::getPowerSprite() const{
+    return powerSprite;
+}
 
+void Powerup::setSprite(){
+    if(type == Type::Health)
+        powerSprite.setTextureRect(sf::IntRect({0,0},{512,512}));
+
+    else if(type == Type::Shield)
+        powerSprite.setTextureRect(sf::IntRect({512,0},{512,512}));
+    
+
+    else if(type == Type::Flight)
+        powerSprite.setTextureRect(sf::IntRect({1024,0},{512,512}));
+    
+
+    else if(type == Type::ElectricResist)
+        powerSprite.setTextureRect(sf::IntRect({0,512},{512,512}));
+    
+
+    else if(type == Type::GodMode)
+        powerSprite.setTextureRect(sf::IntRect({512,512},{512,512}));
+
+    powerSprite.setOrigin({256.f,256.f});
+    powerSprite.setPosition(power.getPosition());
+}
