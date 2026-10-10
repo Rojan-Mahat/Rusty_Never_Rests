@@ -37,12 +37,20 @@ Survive incoming enemies and hazards, dive beneath the surface to avoid danger, 
 | `Enter` | Emergency Shield |
 | `P` | Pause |
 
-## Built With
-- C++17
-- SFML 3
-- CMake
-- Git
-- Blender
+## Third-Party Assets & Services
+
+- Some visual assets were created with **Meshy AI**.
+- Some artwork and visual assets were generated with **OpenAI / ChatGPT image-generation tools**.
+- Most audio and sound effects were sourced from **Uppbeat**.
+
+## Tools Used
+
+- **C++17**
+- **SFML 3**
+- **CMake**
+- **Git**
+- **Blender**
+
 
 ## Build and Run
 
